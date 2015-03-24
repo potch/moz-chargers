@@ -3,11 +3,13 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
-    <link href='//fonts.googleapis.com/css?family=Fira+Sans:400italic,400,600italic,600' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Fira+Sans:300' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
     <title>MV EV Charger Status</title>
     <style>
       * {
         box-sizing: border-box;
+        margin: 0;
       }
       html, body {
         height: 100%;
@@ -18,7 +20,8 @@
         display: flex;
         flex-direction: column;
         font-size: 3.5vmin;
-        background: #EAEFF2;
+        background: #1E1E21;
+        color: #fff;
         line-height: 1.4;
         padding: 1em;
       }
@@ -27,7 +30,7 @@
         margin: .5vmin 0 0;
       }
       h1, h2, strong {
-        font-weight: 600;
+        font-weight: 300;
       }
       strong {
         font-size: 120%;
@@ -35,8 +38,6 @@
       }
       header {
         text-align: center;
-        color: #fff;
-        background: #C13832;
         padding: 1vmin;
       }
       h2 {
@@ -45,90 +46,141 @@
       }
       article {
         flex: 1;
-        margin-top: 1em;
+        margin-top: 2em;
         display: flex;
         flec-direction: row;
       }
       section {
         flex: 1;
-        background: #444;
         padding: 1em;
         position: relative;
       }
-      .grass {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 40vmin;
-        background: green;
-        height: 40vmin;
-      }
-      body {
-        background: #444 url(chargers.svg) no-repeat center;
-        background-size: 100% auto;
-        background-position: bottom left;
-      }
       h1 {
-        position: absolute;
-        left: 4vmin;
-        width: 48vw;
         text-align: center;
-        bottom: 16vw;
-        color: #fff;
       }
-      .status {
+      h2, h3 {
+        font-weight: 300;
+        text-align: center;
+      }
+      .dot {
+        border-radius: 4em;
+        background: #0095DD;
+        padding: .25em;
+        text-align: center;
         position: absolute;
-        width: 6vw;
-        height: 6vw;
+        right: 0%;
+        bottom: 0%;
+        font-size: 3vw;
+      }
+      .dot:before {
+        position: relative;
+        top: 5%;
+        left: 8%;
+      }
+      .hold {
+        width: 50%;
+        padding-top: 50%;
+        position: relative;
+        margin: auto;
+      }
+      .orb {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
         border-radius: 100%;
-        transform: translate(-50%, -50%);
+        border: .1em solid currentColor;
+        box-shadow: 0 0 1em -.5em currentColor, 0 0 10em 0 currentColor inset;
       }
-      .status[data-status] {
-        background: red;
+      .status[data-status] .orb {
+        color: rgb(189, 44, 0);
       }
-      .status[data-status="available"] {
-        background: #0c4;
+      .status[data-status="available"] .orb {
+        color: rgb(54, 211, 106);
       }
-      #s1p1 {
+
+      .status {
+        width: 100%;
         position: absolute;
-        bottom: 27vw;
-        left: 48.5vw;
       }
-      #s1p2 {
-        position: absolute;
-        bottom: 27vw;
-        left: 37.5vw;
+
+      .down .status {
+        bottom: 0;
       }
-      #s2p1 {
-        position: absolute;
-        bottom: 26.7vw;
-        left: 68.5vw;
+
+      .up .status {
+        top: 0;
       }
-      #s2p2 {
-        position: absolute;
-        bottom: 16.1vw;
-        left: 68.5vw;
+
+      .text {
+        margin-top: 1em;
       }
-      </style>
+    </style>
   </head>
   <body>
-    <h1>EV Charger Status</h1>
-    <div class="status" id="s1p1"></div>
-    <div class="status" id="s1p2"></div>
-    <div class="status" id="s2p1"></div>
-    <div class="status" id="s2p2"></div>
+    <header>
+      <h1>EV Charger Status</h1>
+    </header>
+    <article>
+      <section class="down">
+        <div class="status" id="s1p1">
+          <div class="hold">
+            <div class="orb">
+            </div>
+          </div>
+          <h2 class="text"></h2>
+        </div>
+      </section>
+      <section class="up">
+        <div class="status" id="s1p2">
+          <div>
+            <div class="hold">
+              <div class="orb">
+              </div>
+            </div>
+          </div>
+          <h2 class="text"></h2>
+        </div>
+      </section>
+      <section class="up">
+        <div class="status" id="s2p1">
+          <div class="hold">
+            <div class="orb">
+            </div>
+          </div>
+          <h2 class="text"></h2>
+        </div>
+      </section>
+      <section class="down">
+        <div class="status" id="s2p2">
+          <div class="hold">
+            <div class="orb">
+            </div>
+            <i class="dot fa fa-wheelchair"></i>
+          </div>
+          <h2 class="text"></h2>
+        </div>
+      </section>
+    </article>
     <script>
 
       var xhr = new XMLHttpRequest();
       xhr.open('GET', '/status');
       xhr.onload = function () {
         var obj = JSON.parse(xhr.response);
-        document.querySelector('#s1p1').setAttribute('data-status', obj.station1.port1);
-        document.querySelector('#s1p2').setAttribute('data-status', obj.station1.port2);
-        document.querySelector('#s2p1').setAttribute('data-status', obj.station2.port1);
-        document.querySelector('#s2p2').setAttribute('data-status', obj.station2.port2);
+        set('#s1p1', obj.station1.port1);
+        set('#s1p2', obj.station1.port2);
+        set('#s2p1', obj.station2.port1);
+        set('#s2p2', obj.station2.port2);
       }
       xhr.send();
+
+      function set(sel, val) {
+        var el = document.querySelector(sel);
+        el.setAttribute('data-status', val);
+        el.querySelector('.text').innerHTML = val;
+      }
 
     </script>
   </body>
