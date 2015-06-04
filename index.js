@@ -33,11 +33,18 @@ function updateStatus(d, cb) {
       status.station2 = s;
     }
   });
+  fetch(2, function (err, req, body) {
+    if (!err) {
+      var s = parseStatus(body);
+      status.station3 = s;
+    }
+  });
 }
 
 var chargerIDs = [
   97797,
-  97645
+  97645,
+  113379
 ];
 
 function fetch(n, cb) {

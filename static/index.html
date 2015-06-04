@@ -69,7 +69,7 @@
         position: absolute;
         right: 0%;
         bottom: 0%;
-        font-size: 3vw;
+        font-size: 2vw;
       }
       .dot:before {
         position: relative;
@@ -102,14 +102,7 @@
       .status {
         width: 100%;
         position: absolute;
-      }
-
-      .down .status {
-        bottom: 0;
-      }
-
-      .up .status {
-        top: 0;
+        top: 20%;
       }
 
       .text {
@@ -122,7 +115,27 @@
       <h1>EV Charger Status</h1>
     </header>
     <article>
-      <section class="down">
+      <section class="up">
+        <div class="status" id="s3p1">
+          <div class="hold">
+            <div class="orb">
+            </div>
+          </div>
+          <h2 class="text">loading&hellip;</h2>
+        </div>
+      </section>
+      <section class="up">
+        <div class="status" id="s3p2">
+          <div>
+            <div class="hold">
+              <div class="orb">
+              </div>
+            </div>
+          </div>
+          <h2 class="text">loading&hellip;</h2>
+        </div>
+      </section>
+      <section class="up">
         <div class="status" id="s1p1">
           <div class="hold">
             <div class="orb">
@@ -142,7 +155,7 @@
           <h2 class="text">loading&hellip;</h2>
         </div>
       </section>
-      <section class="up">
+      <section class="middle">
         <div class="status" id="s2p2">
           <div class="hold">
             <div class="orb">
@@ -172,6 +185,8 @@
         set('#s1p2', obj.station1.port2);
         set('#s2p1', obj.station2.port1);
         set('#s2p2', obj.station2.port2);
+        set('#s3p1', obj.station3.port1);
+        set('#s3p2', obj.station3.port2);
       }
       xhr.send();
 
