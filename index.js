@@ -21,6 +21,7 @@ app.get('/status', function (req, res) {
 setInterval(updateStatus, 1000 * 60 * 5);
 
 function updateStatus(d, cb) {
+  console.log('fetching updates...');
   fetch(0, function (err, req, body) {
     if (err) {
       console.error(err);
