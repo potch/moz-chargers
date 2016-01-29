@@ -22,19 +22,25 @@ setInterval(updateStatus, 1000 * 60 * 5);
 
 function updateStatus(d, cb) {
   fetch(0, function (err, req, body) {
-    if (!err) {
+    if (err) {
+      console.error(err);
+    } else {
       var s = parseStatus(body);
       status.station1 = s;
     }
   });
   fetch(1, function (err, req, body) {
-    if (!err) {
+    if (err) {
+      console.error(err);
+    } else {
       var s = parseStatus(body);
       status.station2 = s;
     }
   });
   fetch(2, function (err, req, body) {
-    if (!err) {
+    if (err) {
+      console.error(err);
+    } else {
       var s = parseStatus(body);
       status.station3 = s;
     }
