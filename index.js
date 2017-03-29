@@ -21,23 +21,37 @@ app.get('/status', function (req, res) {
 setInterval(updateStatus, 1000 * 60 * 5);
 
 function updateStatus(d, cb) {
+  console.log('fetching updates...');
   fetch(0, function (err, req, body) {
-    if (!err) {
+    if (err) {
+      console.error(err);
+    } else {
       var s = parseStatus(body);
       status.station1 = s;
     }
   });
   fetch(1, function (err, req, body) {
-    if (!err) {
+    if (err) {
+      console.error(err);
+    } else {
       var s = parseStatus(body);
       status.station2 = s;
+    }
+  });
+  fetch(2, function (err, req, body) {
+    if (err) {
+      console.error(err);
+    } else {
+      var s = parseStatus(body);
+      status.station3 = s;
     }
   });
 }
 
 var chargerIDs = [
   97797,
-  97645
+  97645,
+  113379
 ];
 
 function fetch(n, cb) {

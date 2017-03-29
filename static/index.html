@@ -3,7 +3,6 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
-    <link href='//fonts.googleapis.com/css?family=Fira+Sans:300' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
     <title>MV EV Charger Status</title>
     <style>
@@ -16,7 +15,7 @@
         margin: 0;
       }
       body {
-        font-family: 'Fira Sans', sans-serif;
+        font-family: sans-serif;
         display: flex;
         flex-direction: column;
         font-size: 3.5vmin;
@@ -69,7 +68,7 @@
         position: absolute;
         right: 0%;
         bottom: 0%;
-        font-size: 3vw;
+        font-size: 2vw;
       }
       .dot:before {
         position: relative;
@@ -102,14 +101,7 @@
       .status {
         width: 100%;
         position: absolute;
-      }
-
-      .down .status {
-        bottom: 0;
-      }
-
-      .up .status {
-        top: 0;
+        top: 20%;
       }
 
       .text {
@@ -122,7 +114,27 @@
       <h1>EV Charger Status</h1>
     </header>
     <article>
-      <section class="down">
+      <section class="up">
+        <div class="status" id="s3p1">
+          <div class="hold">
+            <div class="orb">
+            </div>
+          </div>
+          <h2 class="text">loading&hellip;</h2>
+        </div>
+      </section>
+      <section class="up">
+        <div class="status" id="s3p2">
+          <div>
+            <div class="hold">
+              <div class="orb">
+              </div>
+            </div>
+          </div>
+          <h2 class="text">loading&hellip;</h2>
+        </div>
+      </section>
+      <section class="up">
         <div class="status" id="s1p1">
           <div class="hold">
             <div class="orb">
@@ -142,7 +154,7 @@
           <h2 class="text">loading&hellip;</h2>
         </div>
       </section>
-      <section class="up">
+      <section class="middle">
         <div class="status" id="s2p2">
           <div class="hold">
             <div class="orb">
@@ -168,10 +180,18 @@
       xhr.open('GET', '/status');
       xhr.onload = function () {
         var obj = JSON.parse(xhr.response);
-        set('#s1p1', obj.station1.port1);
-        set('#s1p2', obj.station1.port2);
-        set('#s2p1', obj.station2.port1);
-        set('#s2p2', obj.station2.port2);
+        if (obj.station1) {
+          set('#s1p1', obj.station1.port1);
+          set('#s1p2', obj.station1.port2);
+        }
+        if (obj.station2) {
+          set('#s2p1', obj.station2.port1);
+          set('#s2p2', obj.station2.port2);
+        }
+        if (obj.station3) {
+          set('#s3p1', obj.station3.port1);
+          set('#s3p2', obj.station3.port2);
+        }
       }
       xhr.send();
 
