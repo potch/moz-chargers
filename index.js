@@ -73,6 +73,8 @@ function fetch(n, cb) {
 function parseStatus(body) {
   var obj = {};
   var $ = cheerio.load(body);
+  var rows;
+  
   rows = $('div').html().split('<br>');
   rows = rows.map(function (r) {
     return cheerio.load(r);
