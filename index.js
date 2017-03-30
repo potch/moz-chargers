@@ -23,6 +23,7 @@ setInterval(updateStatus, 1000 * 60 * 5);
 
 /**
  * callback used by fetch 
+ * bind 'this' to the station identifier
  */
 function statusCallback(err, req, body) {
   if (err) {
