@@ -21,40 +21,27 @@ app.get('/status', function (req, res) {
 
 setInterval(updateStatus, 1000 * 60 * 5);
 
+/**
+ * callback used by fetch 
+ */
+function statusCallback(err, req, body) {
+  if (err) {
+    console.error(err);
+  } else {
+    status[this] = parseStatus(body);
+  }
+  statusCount++;
+  if (statusCount === 3) {
+    updateSlack();
+  }
+}
+
 function updateStatus(d, cb) {
   console.log('fetching updates...');
   statusCount = 0;
-  
-  fetch(0, function (err, req, body) {
-    if (err) {
-      console.error(err);
-    } else {
-      var s = parseStatus(body);
-      status.station1 = s;
-    }
-    statusCount++;
-    if (statusCount === 3) { updateSlack(); }
-  });
-  fetch(1, function (err, req, body) {
-    if (err) {
-      console.error(err);
-    } else {
-      var s = parseStatus(body);
-      status.station2 = s;
-    }
-    statusCount++;
-    if (statusCount === 3) { updateSlack(); }
-  });
-  fetch(2, function (err, req, body) {
-    if (err) {
-      console.error(err);
-    } else {
-      var s = parseStatus(body);
-      status.station3 = s;
-    }
-    statusCount++;
-    if (statusCount === 3) { updateSlack(); }
-  });
+  fetch(0, statusCallback);
+  fetch(1, statusCallback);
+  fetch(2, statusCallback);
 }
 
 var chargerIDs = [
@@ -76,18 +63,18 @@ function fetch(n, cb) {
       level2: 1,
       levelDC: 1
     }
-  }, cb);
+  }, cb.bind('Station ' + (n+1)))
 }
 
 function createMessage() {
   var message = {};
   message.fallback = "Status of Mountain View EV Chargers (left to right)";
-  message.text = "Status of Mountain View EV Chargers (from left to right looking from the building entrance)";
+  message.title = "Status of Mountain View EV Chargers (from left to right looking from the building entrance)";
   message.fields = [];
   Object.keys(status).forEach(function(station) {
     Object.keys(status[station]).forEach(function(charger, i) {
-      var title = station + ' charger' + (i+1);
-      if (station === 'station3' && (i === 1)) {
+      var title = station + ' Charger ' + (i+1);
+      if (station === 'Station 3' && (i === 1)) {
         title += ' (disablity placard)';
       }
       message.fields.push({title: title, value: status[station][charger], short: true});
@@ -99,7 +86,6 @@ function createMessage() {
   message.fields.forEach(function(field) {
     message.fallback += ' ' + field.value;
   });
-  console.log(JSON.stringify(message))
   return message;
 }
 
