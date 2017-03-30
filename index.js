@@ -4,6 +4,7 @@ var http = require('http');
 var request = require('request');
 
 var status = {};
+var statusCount;
 
 var app = express();
 app.set('port', (process.env.PORT || 8000));
@@ -22,6 +23,8 @@ setInterval(updateStatus, 1000 * 60 * 5);
 
 function updateStatus(d, cb) {
   console.log('fetching updates...');
+  statusCount = 0;
+  
   fetch(0, function (err, req, body) {
     if (err) {
       console.error(err);
@@ -29,6 +32,8 @@ function updateStatus(d, cb) {
       var s = parseStatus(body);
       status.station1 = s;
     }
+    statusCount++;
+    if (statusCount === 3) { updateSlack(); }
   });
   fetch(1, function (err, req, body) {
     if (err) {
@@ -37,6 +42,8 @@ function updateStatus(d, cb) {
       var s = parseStatus(body);
       status.station2 = s;
     }
+    statusCount++;
+    if (statusCount === 3) { updateSlack(); }
   });
   fetch(2, function (err, req, body) {
     if (err) {
@@ -45,6 +52,8 @@ function updateStatus(d, cb) {
       var s = parseStatus(body);
       status.station3 = s;
     }
+    statusCount++;
+    if (statusCount === 3) { updateSlack(); }
   });
 }
 
@@ -68,6 +77,44 @@ function fetch(n, cb) {
       levelDC: 1
     }
   }, cb);
+}
+
+function createMessage() {
+  var message = {};
+  message.fallback = "Status of Mountain View EV Chargers (left to right)";
+  message.text = "Status of Mountain View EV Chargers (from left to right looking from the building entrance)";
+  message.fields = [];
+  Object.keys(status).forEach(function(station) {
+    Object.keys(status[station]).forEach(function(charger, i) {
+      var title = station + ' charger' + (i+1);
+      if (station === 'station3' && (i === 1)) {
+        title += ' (disablity placard)';
+      }
+      message.fields.push({title: title, value: status[station][charger], short: true});
+    })
+  });
+  // since the statues for each station come back in any order
+  message.fields.sort(function(a, b) {return a.title > b.title});
+  // add the statuses to the fallback
+  message.fields.forEach(function(field) {
+    message.fallback += ' ' + field.value;
+  });
+  console.log(JSON.stringify(message))
+  return message;
+}
+
+/**
+  Post to slack endpoint the status of the chargers
+ */
+function updateSlack() {
+  request({
+    method: 'post',
+    url: process.env.ENDPOINT,
+    headers: {
+      'Content-Type': "application/json"
+    },
+    body: JSON.stringify(createMessage())
+  }, function() { console.log('posted to slack');});
 }
 
 function parseStatus(body) {
