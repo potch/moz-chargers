@@ -94,6 +94,12 @@ function createMessage() {
   Post to slack endpoint the status of the chargers
  */
 function updateSlack() {
+  
+  // only update if we have a defined endpoint
+  if (typeof process.env.ENDPOINT === 'undefined') {
+    return;
+  }
+  
   request({
     method: 'post',
     url: process.env.ENDPOINT,
@@ -102,6 +108,7 @@ function updateSlack() {
     },
     body: JSON.stringify(createMessage())
   }, function() { console.log('posted to slack');});
+  
 }
 
 function parseStatus(body) {
