@@ -76,7 +76,7 @@ function createMessage() {
     Object.keys(status[station]).forEach(function(charger, i) {
       var title = station + ' Charger ' + (i+1);
       if (station === 'Station 3' && (i === 1)) {
-        title += ' (disablity placard)';
+        title += ' :wheelchair:';
       }
       message.fields.push({title: title, value: status[station][charger], short: true});
     })
