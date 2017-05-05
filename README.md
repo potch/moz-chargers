@@ -1,3 +1,3 @@
 # moz-chargers
 
-Uses Chargepoint's API to determine the state of the Mozilla-employee-only chargers at the Mountain View office
+Scrape Chargepoint's web site to determine the state of the Mozilla-employee only chargers at the Mountain View office and optionally post the status to a slack
