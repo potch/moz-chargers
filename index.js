@@ -64,7 +64,7 @@ function fetch(n, cb) {
       level2: 1,
       levelDC: 1
     }
-  }, cb.bind('Station ' + (n+1)))
+  }, cb.bind(n))
 }
 
 function createMessage() {
@@ -72,17 +72,16 @@ function createMessage() {
   message.fallback = "Status of Mountain View EV Chargers (left to right)";
   message.title = "Status of Mountain View EV Chargers (from left to right looking from the building entrance)";
   message.fields = [];
-  Object.keys(status).forEach(function(station) {
-    Object.keys(status[station]).forEach(function(charger, i) {
-      var title = station + ' Charger ' + (i+1);
-      if (station === 'Station 3' && (i === 1)) {
-        title += ' :wheelchair:';
-      }
-      message.fields.push({title: title, value: status[station][charger], short: true});
-    })
-  });
-  // since the statues for each station come back in any order
-  message.fields.sort(function(a, b) {return a.title > b.title});
+  
+  // Physical order of stations doesn't match object ids 
+  message.fields.push({title: ':electric_plug:', value: status[2].port1, short: true});
+  message.fields.push({title: ':electric_plug:', value: status[2].port2, short: true});
+  message.fields.push({title: ':electric_plug:', value: status[0].port1, short: true});
+  message.fields.push({title: ':electric_plug:', value: status[0].port2, short: true});
+  // This is rotated 90º so ports are reversed
+  message.fields.push({title: ':electric_plug:', value: status[1].port2, short: true});
+  message.fields.push({title: ':electric_plug: :wheelchair:', value: status[1].port1, short: true});  
+  
   // add the statuses to the fallback
   message.fields.forEach(function(field) {
     message.fallback += ' ' + field.value;
