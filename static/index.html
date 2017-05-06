@@ -180,17 +180,17 @@
       xhr.open('GET', '/status');
       xhr.onload = function () {
         var obj = JSON.parse(xhr.response);
-        if (obj.station1) {
-          set('#s1p1', obj.station1.port1);
-          set('#s1p2', obj.station1.port2);
+        if (obj['Station 1']) {
+          set('#s1p1', obj['Station 1'].port1);
+          set('#s1p2', obj['Station 1'].port2);
         }
-        if (obj.station2) {
-          set('#s2p1', obj.station2.port1);
-          set('#s2p2', obj.station2.port2);
+        if (obj['Station 2']) {
+          set('#s2p1', obj['Station 2'].port1);
+          set('#s2p2', obj['Station 2'].port2);
         }
-        if (obj.station3) {
-          set('#s3p1', obj.station3.port1);
-          set('#s3p2', obj.station3.port2);
+        if (obj['Station 3']) {
+          set('#s3p1', obj['Station 3'].port1);
+          set('#s3p2', obj['Station 3'].port2);
         }
       }
       xhr.send();
