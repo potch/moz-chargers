@@ -4,6 +4,10 @@ var http = require('http');
 var request = require('request');
 
 var status = {};
+
+// status is short enough to serialize to keep around 
+// for making comparisons
+var lastStatusStr = "";
 var statusCount;
 
 var app = express();
@@ -33,12 +37,13 @@ function statusCallback(err, req, body) {
   }
   statusCount++;
   if (statusCount === 3) {
-    updateSlack();
+    shouldUpdateSlack();
   }
 }
 
 function updateStatus(d, cb) {
   console.log('fetching updates...');
+  var lastStatusStr = JSON.stringify(status);
   statusCount = 0;
   fetch(0, statusCallback);
   fetch(1, statusCallback);
@@ -89,15 +94,25 @@ function createMessage() {
   return message;
 }
 
+// Update slack if there's an endpoint to post to
+// and the status has changed
+function shouldUpdateSlack() {
+  // only update if we have a defined endpoint
+  if (typeof process.env.ENDPOINT === 'undefined' &&
+      JSON.stringify(status) !== lastStatusStr) {
+    return;
+  }
+  updateSlack();
+}
+
 /**
   Post to slack endpoint the status of the chargers
  */
 function updateSlack() {
   
-  // only update if we have a defined endpoint
-  if (typeof process.env.ENDPOINT === 'undefined') {
-    return;
-  }
+  var body = JSON.stringify(createMessage(status));
+  
+  console.log("message", body)
   
   request({
     method: 'post',
@@ -105,9 +120,17 @@ function updateSlack() {
     headers: {
       'Content-Type': "application/json"
     },
-    body: JSON.stringify(createMessage())
-  }, function() { console.log('posted to slack');});
-  
+    body: body
+  }, function(err, resp, respBody) { 
+      // looking for a response code of 200 is fine for nearly all cases
+      if (resp && resp.statusCode && resp.statusCode === 200) { 
+          console.log('posted to slack');
+      } else {
+        console.log("error posting to slack:", resp.statusCode);
+        console.log("error message:", err); 
+        console.log("response body", respBody);
+      }
+  }); 
 }
 
 function parseStatus(body) {
