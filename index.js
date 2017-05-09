@@ -106,8 +106,16 @@ function updateSlack() {
       'Content-Type': "application/json"
     },
     body: JSON.stringify(createMessage())
-  }, function() { console.log('posted to slack');});
-  
+  }, function(err, resp, body) { 
+      // looking for a response code of 200 is fine for nearly all cases
+      if (resp && resp.statusCode && resp.statusCode === 200) { 
+          console.log('posted to slack');
+      } else {
+        console.log("error posting to slack:", resp.statusCode);
+        console.log("error message:", err); 
+      }
+  });
+   
 }
 
 function parseStatus(body) {
