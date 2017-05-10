@@ -23,7 +23,7 @@ app.get('/status', function (req, res) {
   res.json(status);
 });
 
-setInterval(updateStatus, 1000 * 60 * 5);
+setInterval(updateStatus, 1000 * 60 * 5); 
 
 /**
  * callback used by fetch 
@@ -43,7 +43,7 @@ function statusCallback(err, req, body) {
 
 function updateStatus(d, cb) {
   console.log('fetching updates...');
-  var lastStatusStr = JSON.stringify(status);
+  lastStatusStr = JSON.stringify(status);
   statusCount = 0;
   fetch(0, statusCallback);
   fetch(1, statusCallback);
@@ -97,12 +97,14 @@ function createMessage() {
 // Update slack if there's an endpoint to post to
 // and the status has changed
 function shouldUpdateSlack() {
+  var currStatusStr = JSON.stringify(status);
+  console.log('curr', currStatusStr, "last", lastStatusStr)
   // only update if we have a defined endpoint
-  if (typeof process.env.ENDPOINT === 'undefined' &&
-      JSON.stringify(status) !== lastStatusStr) {
-    return;
+  if (process.env.ENDPOINT &&
+      currStatusStr !== lastStatusStr) {
+    updateSlack();
   }
-  updateSlack();
+  lastStatusStr = currStatusStr;
 }
 
 /**
